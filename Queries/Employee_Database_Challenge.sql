@@ -42,9 +42,76 @@ WHERE de.to_date = '9999-01-01'
 	   AND (birth_date BETWEEN '1965-01-01' AND '1965-12-31')
 ORDER BY emp_no;
 
+--Module Challenge Deliverable 3
 
+--Get the number of employees per dept for a graph
+-- Employee count by department number
+SELECT count(e.emp_no), de.dept_no
+INTO current_counts_3
+FROM employees as e
+LEFT JOIN dept_emp as de
+ON e.emp_no = de.emp_no
+WHERE de.to_date = '9999-01-01'
+GROUP BY de.dept_no
+ORDER BY de.dept_no;
 
+SELECT * FROM current_counts_3;
 
+-- Get number of retiring employees per dept for a graph
+SELECT DISTINCT ON (dr.emp_no) dr.emp_no, de.dept_no
+INTO retire_table_3
+FROM distinct_retires as dr
+LEFT JOIN dept_emp as de
+ON dr.emp_no = de.emp_no
+
+SELECT count(rt3.emp_no)
+INTO retire_counts_3
+FROM retire_table_3 as rt3
+LEFT JOIN dept_emp as de
+ON rt3.emp_no = de.emp_no
+-- Filter to currently employed
+WHERE de.to_date = ('9999-01-01')
+GROUP BY rt3.dept_no
+ORDER BY rt3.dept_no;
+
+SELECT * FROM retire_counts_3
+
+--Get the number of mentorship eligible employees per dept for a graph
+SELECT count(me.emp_no)
+INTO mentors_3
+FROM mentor_eligibility as me
+LEFT JOIN dept_emp as de
+ON me.emp_no = de.emp_no
+GROUP BY de.dept_no
+ORDER BY de.dept_no;
+	  
+SELECT * FROM mentors_3;
+
+--Select More Mentors Hypothetical Option
+--Join employee info with title info, filtered by a date range
+SELECT DISTINCT ON (emp_no) e.emp_no, e.first_name, e.last_name, e.birth_date,
+    de.from_date, de.to_date,
+	ttl.title
+INTO mentor_eligibility_expanded
+FROM employees as e
+LEFT JOIN dept_emp as de
+ON e.emp_no = de.emp_no
+LEFT JOIN titles as ttl
+ON e.emp_no = ttl.emp_no
+WHERE de.to_date = '9999-01-01'
+	   AND (e.birth_date BETWEEN '1964-11-30' AND '1965-12-31')
+ORDER BY emp_no;
+
+--Get the number of EXPANDED mentorship eligible employees per dept for a graph
+SELECT count(mee.emp_no)
+INTO mentors_3_expanded
+FROM mentor_eligibility_expanded as mee
+LEFT JOIN dept_emp as de
+ON mee.emp_no = de.emp_no
+GROUP BY de.dept_no
+ORDER BY de.dept_no;
+	  
+SELECT * FROM mentors_3_expanded;
 
 --Module lesson code:
 
